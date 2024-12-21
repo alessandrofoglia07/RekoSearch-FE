@@ -1,3 +1,4 @@
+import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 import React, { useState } from 'react';
 
 interface FormData {
@@ -7,6 +8,8 @@ interface FormData {
 }
 
 const RegisterPage: React.FC = () => {
+    useRedirectToAccount();
+
     const [formData, setFormData] = useState<FormData>({
         name: '',
         email: '',
