@@ -1,9 +1,10 @@
 import { type PropsWithChildren, createContext } from 'react';
-import { AuthenticationDetails, CognitoUser, CognitoUserSession } from 'amazon-cognito-identity-js';
+import { AuthenticationDetails, CognitoUser, CognitoUserAttribute, CognitoUserSession, ISignUpResult } from 'amazon-cognito-identity-js';
 import userPool from '@/utils/userPool';
 import { passwordSchema } from '@/utils/schemas/authSchemas';
 
 interface IAuthContext {
+    register: (Username: string, Email: string, Password: string) => Promise<ISignUpResult>;
     authenticate: (Username: string, Password: string) => Promise<CognitoUserSession>;
     getSession: () => Promise<CognitoUserSession | null>;
     logout: () => void;
@@ -12,10 +13,21 @@ interface IAuthContext {
 const AccountContext = createContext<IAuthContext>({} as IAuthContext);
 
 const Account = ({ children }: PropsWithChildren) => {
+    const register = async (Username: string, Email: string, Password: string) => {
+        return new Promise<ISignUpResult>((resolve, reject) => {
+            const email = new CognitoUserAttribute({ Name: 'email', Value: Email });
+            userPool.signUp(Username, Password, [email], [], (err, result) => {
+                if (err) return reject(err);
+                if (!result) return reject('Something went wrong.');
+                resolve(result);
+            });
+        });
+    };
+
     const getSession = async () => {
-        return await new Promise<CognitoUserSession | null>((resolve, reject) => {
+        return new Promise<CognitoUserSession | null>((resolve, reject) => {
             const user = userPool.getCurrentUser();
-            if (!user) return reject();
+            if (!user) return reject('No user found.');
             user.getSession((err: Error | null, session: CognitoUserSession | null) => {
                 if (err) return reject(err);
                 resolve(session);
@@ -24,7 +36,7 @@ const Account = ({ children }: PropsWithChildren) => {
     };
 
     const authenticate = async (UsernameOrEmail?: string, Password?: string) => {
-        return await new Promise<CognitoUserSession>((resolve, reject) => {
+        return new Promise<CognitoUserSession>((resolve, reject) => {
             if (!UsernameOrEmail || !Password) return reject('Please fill in all fields.');
             if (!passwordSchema.safeParse(Password).success) return reject('Password does not meet requirements.');
 
@@ -43,7 +55,7 @@ const Account = ({ children }: PropsWithChildren) => {
         if (user) user.signOut();
     };
 
-    return <AccountContext.Provider value={{ getSession, authenticate, logout }}>{children} </AccountContext.Provider>;
+    return <AccountContext.Provider value={{ register, getSession, authenticate, logout }}>{children} </AccountContext.Provider>;
 };
 
 export { Account, AccountContext };
