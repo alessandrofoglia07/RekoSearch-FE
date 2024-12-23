@@ -5,7 +5,7 @@ import { passwordSchema } from '@/utils/schemas/authSchemas';
 
 interface IAuthContext {
     register: (Username: string, Email: string, Password: string) => Promise<ISignUpResult>;
-    authenticate: (Username: string, Password: string) => Promise<CognitoUserSession>;
+    authenticate: (UsernameOrEmail?: string, Password?: string) => Promise<CognitoUserSession>;
     getSession: () => Promise<CognitoUserSession | null>;
     logout: () => void;
 }
