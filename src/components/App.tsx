@@ -4,6 +4,7 @@ import HomePage from '@/pages/MainPage';
 import RegisterPage from '@/pages/account/RegisterPage';
 import LoginPage from '@/pages/account/LoginPage';
 import AccountPage from '@/pages/AccountPage';
+import ConfirmCodePage from '@/pages/account/ConfirmCodePage';
 
 const App: React.FC = () => {
     return (
@@ -13,6 +14,7 @@ const App: React.FC = () => {
             <Route path='/account' element={<AccountPage />} />
             <Route path='/account/register' element={<RegisterPage />} />
             <Route path='/account/login' element={<LoginPage />} />
+            <Route path='/account/confirm' element={<ConfirmCodePage />} />
 
             <Route path='*' element={<Navigate to='/' replace />} />
         </Routes>

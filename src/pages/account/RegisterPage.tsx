@@ -64,7 +64,7 @@ const RegisterPage: React.FC = () => {
 
         try {
             register(formData.username, formData.email, formData.password);
-            // TODO: implement email confirmation
+            navigate(`/account/confirm?email=${formData.email}`);
         } catch (err) {
             if (err instanceof Error) setError((prev) => ({ ...prev, password: err.message }));
             else if (typeof err === 'string') setError((prev) => ({ ...prev, password: err }));
