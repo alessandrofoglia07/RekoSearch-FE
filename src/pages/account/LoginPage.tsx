@@ -1,7 +1,7 @@
+import React, { useContext, useState } from 'react';
 import { AccountContext } from '@/context/AccountContext';
 import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 import { passwordSchema } from '@/utils/schemas/authSchemas';
-import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface FormData {

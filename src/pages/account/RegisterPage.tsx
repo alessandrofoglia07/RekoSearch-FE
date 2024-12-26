@@ -1,5 +1,5 @@
-import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 import React, { useContext, useState } from 'react';
+import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 import { nameSchema, emailSchema, passwordSchema } from '@/utils/schemas/authSchemas';
 import { AccountContext } from '@/context/AccountContext';
 import { useNavigate } from 'react-router-dom';
@@ -14,7 +14,7 @@ const RegisterPage: React.FC = () => {
     useRedirectToAccount();
     const navigate = useNavigate();
 
-    const { register, authenticate } = useContext(AccountContext);
+    const { register } = useContext(AccountContext);
 
     const [formData, setFormData] = useState<FormData>({
         username: '',
