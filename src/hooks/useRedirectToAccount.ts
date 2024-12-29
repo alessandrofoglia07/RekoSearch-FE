@@ -1,23 +1,16 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useContext } from "react";
-import { AccountContext } from "@/context/AccountContext";
+import { useEffect } from "react";
+import { useAuth } from "react-oidc-context";
 
 const useRedirectToAccount = () => {
     const navigate = useNavigate();
-    const { getSession } = useContext(AccountContext);
+    const auth = useAuth();
 
     useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                const session = await getSession();
-                if (session) navigate('/account', { replace: true });
-            } catch (err) {
-                return;
-            }
-        };
-
-        checkAuth();
-    }, [getSession, navigate]);
+        if (auth.isAuthenticated) {
+            navigate('/account');
+        }
+    }, [navigate, auth.isAuthenticated]);
 };
 
 export default useRedirectToAccount;
