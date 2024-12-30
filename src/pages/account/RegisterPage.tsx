@@ -1,8 +1,8 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 import { nameSchema, emailSchema, passwordSchema } from '@/utils/schemas/authSchemas';
-import { AccountContext } from '@/context/AccountContext';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 interface FormData {
     username: string;
@@ -13,8 +13,6 @@ interface FormData {
 const RegisterPage: React.FC = () => {
     useRedirectToAccount();
     const navigate = useNavigate();
-
-    const { register } = useContext(AccountContext);
 
     const [formData, setFormData] = useState<FormData>({
         username: '',
@@ -57,14 +55,20 @@ const RegisterPage: React.FC = () => {
         return canContinue;
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
         if (!validateFields()) return;
 
         try {
-            register(formData.username, formData.email, formData.password);
+            const res = await axios.post(`https://${import.meta.env.VITE_AWS_COGNITO_USER_POOL_ID}.auth.${import.meta.env.VITE_AWS_REGION}.amazoncognito.com/signup`, {
+                username: formData.username,
+                password: formData.password,
+                email: formData.email
+            });
+            if (res.status !== 200) throw new Error('An error occurred');
             navigate(`/account/confirm?email=${formData.email}`);
+            // TODO: Check if this works and then continue working on the confirm page and then the login page
         } catch (err) {
             if (err instanceof Error) setError((prev) => ({ ...prev, password: err.message }));
             else if (typeof err === 'string') setError((prev) => ({ ...prev, password: err }));

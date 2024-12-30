@@ -1,8 +1,7 @@
-import React, { useContext, useState } from 'react';
-import { AccountContext } from '@/context/AccountContext';
+import React, { useState } from 'react';
 import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 import { passwordSchema } from '@/utils/schemas/authSchemas';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from 'react-oidc-context';
 
 interface FormData {
     emailOrUsername: string;
@@ -11,9 +10,7 @@ interface FormData {
 
 const LoginPage: React.FC = () => {
     useRedirectToAccount();
-    const navigate = useNavigate();
-
-    const { authenticate } = useContext(AccountContext);
+    const auth = useAuth();
 
     const [formData, setFormData] = useState<FormData>({
         emailOrUsername: '',
@@ -29,8 +26,7 @@ const LoginPage: React.FC = () => {
         e.preventDefault();
         if (!passwordSchema.safeParse(formData.password).success) return setError('Invalid password');
         try {
-            await authenticate(formData.emailOrUsername, formData.password);
-            navigate('/');
+            auth.signinRedirect(); // TODO: finish implementing login
         } catch (err) {
             if (err instanceof Error) setError(err.message);
             else if (typeof err === 'string') setError(err);

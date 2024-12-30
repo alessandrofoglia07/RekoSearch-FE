@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 import { confirmCodeSchema } from '@/utils/schemas/authSchemas';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { CognitoUser } from 'amazon-cognito-identity-js';
-import userPool from '@/utils/userPool';
+import axios from 'axios';
 
 const ConfirmCodePage: React.FC = () => {
     useRedirectToAccount();
@@ -20,20 +19,24 @@ const ConfirmCodePage: React.FC = () => {
         const codeVal = confirmCodeSchema.safeParse(code);
         if (!codeVal.success) return setError('Something went wrong. Try again.');
 
-        const name = searchParams.get('name');
-        if (!name) return setError('Something went wrong. Try again.');
+        const email = searchParams.get('email');
+        if (!email) return setError('Something went wrong. Try again.');
 
         setError(null);
 
-        const cognitoUser = new CognitoUser({ Username: name, Pool: userPool });
+        try {
+            const res = await axios.post(`https://${import.meta.env.VITE_AWS_COGNITO_USER_POOL_ID}.auth.${import.meta.env.VITE_AWS_REGION}.amazoncognito.com/confirm-signup`, {
+                email,
+                code
+            });
 
-        cognitoUser.confirmRegistration(code, true, (err?: Error) => {
-            if (err) {
-                console.error(err);
-                return setError('Something went wrong. Try again.');
-            }
-            navigate('/account/login'); // TODO: implement automatic login
-        });
+            if (res.status !== 200) return setError('Something went wrong. Try again.');
+
+            navigate('/account/login');
+        } catch (err) {
+            console.error(err);
+            setError('Something went wrong. Try again.');
+        }
     };
 
     useEffect(() => {
