@@ -13,29 +13,28 @@ const ConfirmCodePage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
 
     const confirmCode = async () => {
+        const defaultErr = 'Something went wrong. Try again.';
         const code = searchParams.get('code');
-        if (!code) return setError('Something went wrong. Try again.');
+        if (!code) return setError(defaultErr);
 
         const codeVal = confirmCodeSchema.safeParse(code);
-        if (!codeVal.success) return setError('Something went wrong. Try again.');
+        if (!codeVal.success) return setError(defaultErr);
 
         const email = searchParams.get('email');
-        if (!email) return setError('Something went wrong. Try again.');
+        if (!email) return setError(defaultErr);
 
         setError(null);
 
         try {
-            const res = await axios.post(`https://${import.meta.env.VITE_AWS_COGNITO_USER_POOL_ID}.auth.${import.meta.env.VITE_AWS_REGION}.amazoncognito.com/confirm-signup`, {
+            await axios.post(`https://${import.meta.env.VITE_AWS_COGNITO_USER_POOL_ID}.auth.${import.meta.env.VITE_AWS_REGION}.amazoncognito.com/confirm-signup`, {
                 email,
                 code
             });
 
-            if (res.status !== 200) return setError('Something went wrong. Try again.');
-
             navigate('/account/login');
         } catch (err) {
             console.error(err);
-            setError('Something went wrong. Try again.');
+            setError(defaultErr);
         }
     };
 

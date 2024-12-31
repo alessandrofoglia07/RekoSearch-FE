@@ -61,18 +61,16 @@ const RegisterPage: React.FC = () => {
         if (!validateFields()) return;
 
         try {
-            const res = await axios.post(`https://${import.meta.env.VITE_AWS_COGNITO_USER_POOL_ID}.auth.${import.meta.env.VITE_AWS_REGION}.amazoncognito.com/signup`, {
+            await axios.post(`https://${import.meta.env.VITE_AWS_COGNITO_USER_POOL_ID}.auth.${import.meta.env.VITE_AWS_REGION}.amazoncognito.com/signup`, {
                 username: formData.username,
                 password: formData.password,
                 email: formData.email
             });
-            if (res.status !== 200) throw new Error('An error occurred');
             navigate(`/account/confirm?email=${formData.email}`);
-            // TODO: Check if this works and then continue working on the confirm page and then the login page
         } catch (err) {
             if (err instanceof Error) setError((prev) => ({ ...prev, password: err.message }));
             else if (typeof err === 'string') setError((prev) => ({ ...prev, password: err }));
-            else setError((prev) => ({ ...prev, password: 'An error occurred' }));
+            else setError((prev) => ({ ...prev, password: 'Something went wrong. Try again.' }));
         }
     };
 

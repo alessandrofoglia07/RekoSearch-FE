@@ -30,7 +30,7 @@ const LoginPage: React.FC = () => {
         } catch (err) {
             if (err instanceof Error) setError(err.message);
             else if (typeof err === 'string') setError(err);
-            else setError('An error occurred');
+            else setError('Something went wrong. Try again.');
         }
     };
 
