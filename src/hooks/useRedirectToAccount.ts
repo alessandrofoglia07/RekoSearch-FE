@@ -1,16 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { useAuth } from "react-oidc-context";
+import useAuth from "./useAuth";
 
 const useRedirectToAccount = () => {
     const navigate = useNavigate();
-    const auth = useAuth();
+    const { getSession } = useAuth();
 
     useEffect(() => {
-        if (auth.isAuthenticated) {
-            navigate('/account');
-        }
-    }, [navigate, auth.isAuthenticated]);
+        (async () => {
+            const session = await getSession();
+            if (session) navigate('/');
+        })();
+    }, [navigate, getSession]);
 };
 
 export default useRedirectToAccount;
