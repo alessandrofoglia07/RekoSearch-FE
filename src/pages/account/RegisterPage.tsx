@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 import { nameSchema, emailSchema, passwordSchema } from '@/utils/schemas/authSchemas';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import useAuth from '@/hooks/useAuth';
 
 interface FormData {
     username: string;
@@ -12,6 +12,7 @@ interface FormData {
 
 const RegisterPage: React.FC = () => {
     useRedirectToAccount();
+    const { register } = useAuth();
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState<FormData>({
@@ -61,11 +62,7 @@ const RegisterPage: React.FC = () => {
         if (!validateFields()) return;
 
         try {
-            await axios.post(`https://${import.meta.env.VITE_AWS_COGNITO_USER_POOL_ID}.auth.${import.meta.env.VITE_AWS_REGION}.amazoncognito.com/signup`, {
-                username: formData.username,
-                password: formData.password,
-                email: formData.email
-            });
+            await register(formData.username, formData.email, formData.password);
             navigate(`/account/confirm?email=${formData.email}`);
         } catch (err) {
             if (err instanceof Error) setError((prev) => ({ ...prev, password: err.message }));
