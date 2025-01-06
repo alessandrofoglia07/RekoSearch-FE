@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 import { confirmCodeSchema } from '@/utils/schemas/authSchemas';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import axios from 'axios';
+import { CognitoUser } from 'amazon-cognito-identity-js';
+import userPool from '@/utils/userPool';
 
 const ConfirmCodePage: React.FC = () => {
     useRedirectToAccount();
@@ -20,18 +21,22 @@ const ConfirmCodePage: React.FC = () => {
         const codeVal = confirmCodeSchema.safeParse(code);
         if (!codeVal.success) return setError(defaultErr);
 
-        const email = searchParams.get('email');
-        if (!email) return setError(defaultErr);
+        const name = searchParams.get('name');
+        if (!name) return setError(defaultErr);
 
         setError(null);
 
         try {
-            await axios.post(`https://${import.meta.env.VITE_AWS_COGNITO_USER_POOL_ID}.auth.${import.meta.env.VITE_AWS_REGION}.amazoncognito.com/confirm-signup`, {
-                email,
-                code
-            });
+            const cognitoUser = new CognitoUser({ Username: name, Pool: userPool });
 
-            navigate('/account/login');
+            cognitoUser.confirmRegistration(code, true, (err?: Error) => {
+                if (err) {
+                    setError(err.message);
+                } else {
+                    setError(null);
+                    navigate('/account/login');
+                }
+            });
         } catch (err) {
             console.error(err);
             setError(defaultErr);
