@@ -46,7 +46,7 @@ const LoginPage: React.FC = () => {
             </form>
             {error && <p>{error}</p>}
             <button onClick={handleSubmit}>Login</button>
-            <a href='/login'>
+            <a href='/account/register'>
                 Don't have an account? <span>Register</span>
             </a>
         </div>

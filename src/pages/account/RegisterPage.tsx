@@ -83,7 +83,7 @@ const RegisterPage: React.FC = () => {
                 {error.password && <span>{error.password}</span>}
             </form>
             <button onClick={handleSubmit}>Register</button>
-            <a href='/login'>
+            <a href='/account/login'>
                 Already have an account? <span>Login</span>
             </a>
         </div>
