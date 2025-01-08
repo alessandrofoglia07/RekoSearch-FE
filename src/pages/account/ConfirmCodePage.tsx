@@ -11,12 +11,11 @@ const ConfirmCodePage: React.FC = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
+    const [code, setCode] = useState('');
     const [error, setError] = useState<string | null>(null);
 
     const confirmCode = async () => {
         const defaultErr = 'Something went wrong. Try again.';
-        const code = searchParams.get('code');
-        if (!code) return setError(defaultErr);
 
         const codeVal = confirmCodeSchema.safeParse(code);
         if (!codeVal.success) return setError(defaultErr);
@@ -52,7 +51,12 @@ const ConfirmCodePage: React.FC = () => {
         }
     }, [searchParams]);
 
-    return <div>{error && <p>{error}</p>}</div>;
+    return (
+        <div>
+            <input type='text' name='code' placeholder='Code' value={code} onChange={(e) => setCode(e.target.value)} />
+            {error && <p>{error}</p>}
+        </div>
+    );
 };
 
 export default ConfirmCodePage;
