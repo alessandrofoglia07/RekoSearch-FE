@@ -19,7 +19,7 @@ const PrivateRoutes: React.FC = () => {
 
     if (isAuth === undefined) return null;
 
-    return isAuth ? <Outlet /> : <Navigate to='/account/signin' replace />;
+    return isAuth ? <Outlet /> : <Navigate to='/account/login' replace />;
 };
 
 export default PrivateRoutes;
