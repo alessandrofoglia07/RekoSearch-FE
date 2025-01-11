@@ -3,9 +3,10 @@ import { AuthenticationDetails, CognitoUser, CognitoUserAttribute, CognitoUserSe
 import userPool from '@/utils/userPool';
 import { passwordSchema } from '@/utils/schemas/authSchemas';
 
-interface IAuthContext {
+export interface IAuthContext {
     register: (Username: string, Email: string, Password: string) => Promise<ISignUpResult>;
     authenticate: (UsernameOrEmail?: string, Password?: string) => Promise<CognitoUserSession>;
+    confirmCode: (Username: string, Code: string) => Promise<void>;
     getSession: () => Promise<CognitoUserSession | null>;
     logout: () => void;
 }
@@ -13,7 +14,7 @@ interface IAuthContext {
 const AccountContext = createContext<IAuthContext>({} as IAuthContext);
 
 const Account = ({ children }: PropsWithChildren) => {
-    const register = async (Username: string, Email: string, Password: string) => {
+    const register = (Username: string, Email: string, Password: string) => {
         return new Promise<ISignUpResult>((resolve, reject) => {
             const email = new CognitoUserAttribute({ Name: 'email', Value: Email });
             userPool.signUp(Username, Password, [email], [], (err, result) => {
@@ -24,7 +25,7 @@ const Account = ({ children }: PropsWithChildren) => {
         });
     };
 
-    const getSession = async () => {
+    const getSession = () => {
         return new Promise<CognitoUserSession | null>((resolve, reject) => {
             const user = userPool.getCurrentUser();
             if (!user) return reject('No user found.');
@@ -35,7 +36,7 @@ const Account = ({ children }: PropsWithChildren) => {
         });
     };
 
-    const authenticate = async (UsernameOrEmail?: string, Password?: string) => {
+    const authenticate = (UsernameOrEmail?: string, Password?: string) => {
         return new Promise<CognitoUserSession>((resolve, reject) => {
             if (!UsernameOrEmail || !Password) return reject('Please fill in all fields.');
             if (!passwordSchema.safeParse(Password).success) return reject('Password does not meet requirements.');
@@ -50,12 +51,22 @@ const Account = ({ children }: PropsWithChildren) => {
         });
     };
 
+    const confirmCode = (Username: string, Code: string) => {
+        return new Promise<void>((resolve, reject) => {
+            const user = new CognitoUser({ Username, Pool: userPool });
+            user.confirmRegistration(Code, true, (err?: Error) => {
+                if (err) return reject(err);
+                resolve();
+            });
+        });
+    };
+
     const logout = () => {
         const user = userPool.getCurrentUser();
         if (user) user.signOut();
     };
 
-    return <AccountContext.Provider value={{ register, getSession, authenticate, logout }}>{children} </AccountContext.Provider>;
+    return <AccountContext.Provider value={{ register, getSession, authenticate, confirmCode, logout }}>{children} </AccountContext.Provider>;
 };
 
 export { Account, AccountContext };

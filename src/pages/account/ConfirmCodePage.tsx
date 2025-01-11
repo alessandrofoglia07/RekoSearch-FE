@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 import { confirmCodeSchema } from '@/utils/schemas/authSchemas';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { CognitoUser } from 'amazon-cognito-identity-js';
-import userPool from '@/utils/userPool';
+import useAuth from '@/hooks/useAuth';
 
 const ConfirmCodePage: React.FC = () => {
     useRedirectToAccount();
 
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
+    const { confirmCode } = useAuth();
 
     const [code, setCode] = useState('');
     const [error, setError] = useState<string | null>(null);
 
-    const confirmCode = async () => {
+    const submit = async () => {
         const defaultErr = 'Something went wrong. Try again.';
 
         const codeVal = confirmCodeSchema.safeParse(code);
@@ -26,34 +26,18 @@ const ConfirmCodePage: React.FC = () => {
         setError(null);
 
         try {
-            const cognitoUser = new CognitoUser({ Username: name, Pool: userPool });
-
-            cognitoUser.confirmRegistration(code, true, (err?: Error) => {
-                if (err) {
-                    setError(err.message);
-                } else {
-                    setError(null);
-                    navigate('/account/login');
-                }
-            });
+            await confirmCode(name, code);
+            navigate('/account/login');
         } catch (err) {
             console.error(err);
             setError(defaultErr);
         }
     };
 
-    useEffect(() => {
-        try {
-            confirmCode();
-        } catch (err) {
-            console.error(err);
-            setError('Something went wrong. Try again.');
-        }
-    }, [searchParams]);
-
     return (
         <div>
             <input type='text' name='code' placeholder='Code' value={code} onChange={(e) => setCode(e.target.value)} />
+            <button onClick={submit}>Submit</button>
             {error && <p>{error}</p>}
         </div>
     );

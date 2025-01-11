@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import { AccountContext } from "@/context/AccountContext";
+import { AccountContext, IAuthContext } from "@/context/AccountContext";
 
-const useAuth = () => {
+const useAuth = (): IAuthContext => {
     return useContext(AccountContext);
 };
 
