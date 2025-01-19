@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import useAuth from '@/hooks/useAuth';
 import axios from '@/api/authAxios';
@@ -6,6 +6,7 @@ import axios from '@/api/authAxios';
 const MainPage: React.FC = () => {
     const { getSession } = useAuth();
     const [image, setImage] = useState<string | null>(null);
+    const [images, setImages] = useState<string[]>([]);
 
     const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
@@ -24,6 +25,15 @@ const MainPage: React.FC = () => {
         console.log(res.data);
     };
 
+    const getImages = async () => {
+        const res = await axios.get('/images');
+        setImages(res.data);
+    };
+
+    useEffect(() => {
+        getImages();
+    }, []);
+
     return (
         <div>
             <header className='h-20'>
@@ -37,6 +47,11 @@ const MainPage: React.FC = () => {
                 <button disabled={image == null} onClick={handleSubmit}>
                     Submit
                 </button>
+                <div>
+                    {images.map((image) => (
+                        <img key={image} src={image} alt='image' />
+                    ))}
+                </div>
             </main>
         </div>
     );
