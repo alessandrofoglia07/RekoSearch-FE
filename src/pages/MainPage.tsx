@@ -7,6 +7,7 @@ const MainPage: React.FC = () => {
     const { getSession } = useAuth();
     const [image, setImage] = useState<string | null>(null);
     const [images, setImages] = useState<string[]>([]);
+    const [loading, setLoading] = useState(false);
 
     const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
@@ -26,8 +27,15 @@ const MainPage: React.FC = () => {
     };
 
     const getImages = async () => {
-        const res = await axios.get('/images');
-        setImages(res.data);
+        try {
+            setLoading(true);
+            const res = await axios.get('/images');
+            setImages(res.data);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -48,6 +56,7 @@ const MainPage: React.FC = () => {
                     Submit
                 </button>
                 <div>
+                    {loading && <p>Loading...</p>}
                     {images.map((image) => (
                         <img key={image} src={image} alt='image' />
                     ))}
