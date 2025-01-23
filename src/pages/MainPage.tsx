@@ -18,12 +18,23 @@ const MainPage: React.FC = () => {
     const handleSubmit = async () => {
         const session = await getSession();
         if (!session) return console.log('User is not authenticated');
-        const formData = new FormData();
-        formData.append('image', image!);
-        const res = await axios.post('/image', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+        if (!image) return console.log('No image selected');
+        try {
+            // request pre-signed URL from backend
+            const { data } = await axios.post('/upload-url', {
+                fileName: image!.name,
+                fileType: image!.type
+            });
+            const { uploadUrl, imageKey } = data;
+            await axios.put(uploadUrl, image!.objUrl, {
+                headers: {
+                    'Content-Type': image!.type
+                }
         });
-        console.log(res.data);
+            console.log('Image uploaded successfully:', imageKey);
+        } catch (err) {
+            console.log(err);
+        }
     };
 
     const getImages = async () => {
