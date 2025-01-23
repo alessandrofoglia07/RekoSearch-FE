@@ -3,15 +3,26 @@ import Navbar from '@/components/Navbar';
 import useAuth from '@/hooks/useAuth';
 import axios from '@/api/authAxios';
 
+interface Image {
+    file: File;
+    previewUrl: string;
+}
+
 const MainPage: React.FC = () => {
     const { getSession } = useAuth();
-    const [image, setImage] = useState<string | null>(null);
+    const [image, setImage] = useState<Image | null>(null);
     const [images, setImages] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
 
     const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
-            setImage(URL.createObjectURL(event.target.files[0]));
+            const file = event.target.files[0];
+            if (file) {
+                setImage({
+                    file,
+                    previewUrl: URL.createObjectURL(file)
+                });
+            }
         }
     };
 
@@ -22,15 +33,15 @@ const MainPage: React.FC = () => {
         try {
             // request pre-signed URL from backend
             const { data } = await axios.post('/upload-url', {
-                fileName: image!.name,
-                fileType: image!.type
+                fileName: image.file.name,
+                fileType: image.file.type
             });
             const { uploadUrl, imageKey } = data;
-            await axios.put(uploadUrl, image!.objUrl, {
+            await axios.put(uploadUrl, image.file, {
                 headers: {
-                    'Content-Type': image!.type
+                    'Content-Type': image.file.type
                 }
-        });
+            });
             console.log('Image uploaded successfully:', imageKey);
         } catch (err) {
             console.log(err);
@@ -61,7 +72,7 @@ const MainPage: React.FC = () => {
             <main>
                 <div className='mx-auto my-24 max-w-[30rem] rounded-md p-6 shadow-sm sm:p-12 md:max-w-[40rem] md:p-24 lg:max-w-[60rem]'>MainPage</div>
                 <input type='file' onChange={onImageChange} />
-                {image && <img src={image} alt='preview' />}
+                {image && <img src={image.previewUrl} alt='preview' />}
                 <button onClick={() => setImage(null)}>Remove</button>
                 <button disabled={image == null} onClick={handleSubmit}>
                     Submit
