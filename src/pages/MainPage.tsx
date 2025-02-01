@@ -70,7 +70,7 @@ const MainPage: React.FC = () => {
                 <Navbar />
             </header>
             <main>
-                <div className='mx-auto my-24 max-w-[30rem] rounded-md p-6 shadow-sm sm:p-12 md:max-w-[40rem] md:p-24 lg:max-w-[60rem]'>MainPage</div>
+                <div className='shadow-xs mx-auto my-24 max-w-[30rem] rounded-md p-6 sm:p-12 md:max-w-[40rem] md:p-24 lg:max-w-[60rem]'>MainPage</div>
                 <input type='file' onChange={onImageChange} />
                 {image && <img src={image.previewUrl} alt='preview' />}
                 <button onClick={() => setImage(null)}>Remove</button>

@@ -11,7 +11,7 @@ const AccountPage: React.FC = () => {
                 <Navbar />
             </header>
             <main>
-                <div className='mx-auto my-24 max-w-[30rem] rounded-md p-6 shadow-sm sm:p-12 md:max-w-[40rem] md:p-24 lg:max-w-[60rem]'>
+                <div className='shadow-xs mx-auto my-24 max-w-[30rem] rounded-md p-6 sm:p-12 md:max-w-[40rem] md:p-24 lg:max-w-[60rem]'>
                     <h1>AccountPage</h1>
                     <button onClick={logout}>Logout</button>
                 </div>
