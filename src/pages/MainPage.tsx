@@ -36,13 +36,13 @@ const MainPage: React.FC = () => {
                 fileName: image.file.name,
                 fileType: image.file.type
             });
-            const { uploadUrl, imageKey } = data;
+            const { uploadUrl, imageId } = data;
             await axios.put(uploadUrl, image.file, {
                 headers: {
                     'Content-Type': image.file.type
                 }
             });
-            console.log('Image uploaded successfully:', imageKey);
+            console.log('Image uploaded successfully:', imageId);
         } catch (err) {
             console.log(err);
         }
