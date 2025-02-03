@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-import useRedirectToAccount from '@/hooks/useRedirectToAccount';
+import useRedirectToAccount from '@/hooks/useRedirectIfAuthenticated';
 import { confirmCodeSchema } from '@/utils/schemas/authSchemas';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import useAuth from '@/hooks/useAuth';
+import auth from '@/api/auth';
 
 const ConfirmCodePage: React.FC = () => {
     useRedirectToAccount();
 
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const { confirmCode } = useAuth();
 
     const [code, setCode] = useState('');
     const [error, setError] = useState<string | null>(null);
@@ -26,7 +25,7 @@ const ConfirmCodePage: React.FC = () => {
         setError(null);
 
         try {
-            await confirmCode(name, code);
+            await auth.verifyUser(name, code);
             navigate('/account/login');
         } catch (err) {
             console.error(err);

@@ -1,19 +1,17 @@
-import Navbar from '@/components/Navbar';
-import useAuth from '@/hooks/useAuth';
 import React from 'react';
+import auth from '@/api/auth';
+import Navbar from '@/components/Navbar';
 
 const AccountPage: React.FC = () => {
-    const { logout } = useAuth();
-
     return (
         <div>
             <header className='h-20'>
                 <Navbar />
             </header>
             <main>
-                <div className='shadow-xs mx-auto my-24 max-w-[30rem] rounded-md p-6 sm:p-12 md:max-w-[40rem] md:p-24 lg:max-w-[60rem]'>
+                <div className='mx-auto my-24 max-w-[30rem] rounded-md p-6 shadow-xs sm:p-12 md:max-w-[40rem] md:p-24 lg:max-w-[60rem]'>
                     <h1>AccountPage</h1>
-                    <button onClick={logout}>Logout</button>
+                    <button onClick={auth.logoutUser}>Logout</button>
                 </div>
             </main>
         </div>

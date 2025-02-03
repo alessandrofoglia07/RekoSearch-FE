@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
-import useAuth from '@/hooks/useAuth';
 import axios from '@/api/authAxios';
+import auth from '@/api/auth';
 
 interface Image {
     file: File;
@@ -9,7 +9,6 @@ interface Image {
 }
 
 const MainPage: React.FC = () => {
-    const { getSession } = useAuth();
     const [image, setImage] = useState<Image | null>(null);
     const [images, setImages] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
@@ -27,8 +26,8 @@ const MainPage: React.FC = () => {
     };
 
     const handleSubmit = async () => {
-        const session = await getSession();
-        if (!session) return console.log('User is not authenticated');
+        const user = await auth.getCurrentAuthenticatedUser();
+        if (!user) return console.log('User is not authenticated');
         if (!image) return console.log('No image selected');
         try {
             // request pre-signed URL from backend
@@ -70,7 +69,7 @@ const MainPage: React.FC = () => {
                 <Navbar />
             </header>
             <main>
-                <div className='shadow-xs mx-auto my-24 max-w-[30rem] rounded-md p-6 sm:p-12 md:max-w-[40rem] md:p-24 lg:max-w-[60rem]'>MainPage</div>
+                <div className='mx-auto my-24 max-w-[30rem] rounded-md p-6 shadow-xs sm:p-12 md:max-w-[40rem] md:p-24 lg:max-w-[60rem]'>MainPage</div>
                 <input type='file' onChange={onImageChange} />
                 {image && <img src={image.previewUrl} alt='preview' />}
                 <button onClick={() => setImage(null)}>Remove</button>
