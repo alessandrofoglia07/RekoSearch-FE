@@ -1,21 +1,20 @@
-import useAuth from '@/hooks/useAuth';
 import React, { useEffect, useState } from 'react';
+import auth from '@/api/auth';
 import { Navigate, Outlet } from 'react-router-dom';
 
 const PrivateRoutes: React.FC = () => {
     const [isAuth, setIsAuth] = useState<boolean | undefined>(undefined);
-    const { getSession } = useAuth();
 
     useEffect(() => {
         (async () => {
             try {
-                const session = await getSession();
-                setIsAuth(!!session);
+                const user = await auth.getCurrentAuthenticatedUser();
+                setIsAuth(!!user);
             } catch (err) {
                 setIsAuth(false);
             }
         })();
-    }, [getSession]);
+    }, [auth]);
 
     if (isAuth === undefined) return null;
 
