@@ -6,11 +6,13 @@ import LoginPage from '@/pages/account/LoginPage';
 import AccountPage from '@/pages/AccountPage';
 import ConfirmCodePage from '@/pages/account/ConfirmCodePage';
 import PrivateRoutes from '@/context/PrivateRoutes';
+import ImagePage from '@/pages/ImagePage';
 
 const App: React.FC = () => {
     return (
         <Routes>
             <Route path='/' element={<HomePage />} />
+            <Route path='/image/:id' element={<ImagePage />} />
             <Route element={<PrivateRoutes />}>
                 <Route path='/account' element={<AccountPage />} />
             </Route>
