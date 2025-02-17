@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
-import axios from '@/api/authAxios';
+import authAxios from '@/api/authAxios';
+import axios from '@/api/axios';
 import auth from '@/api/auth';
 
 interface Image {
@@ -31,7 +32,7 @@ const MainPage: React.FC = () => {
         if (!image) return console.log('No image selected');
         try {
             // request pre-signed URL from backend
-            const { data } = await axios.post('/upload-url', {
+            const { data } = await authAxios.post('/upload-url', {
                 fileName: image.file.name,
                 fileType: image.file.type
             });
