@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import authAxios from '@/api/authAxios';
 import axios from '@/api/axios';
 import auth from '@/api/auth';
+import { categories, Category } from '@/utils/categories';
 
 interface Image {
     file: File;
@@ -10,9 +12,19 @@ interface Image {
 }
 
 const MainPage: React.FC = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
+
     const [image, setImage] = useState<Image | null>(null);
     const [images, setImages] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
+    const [category, setCategory] = useState<Category>('Trending');
+
+    useEffect(() => {
+        if (searchParams.has('category') && categories.includes(searchParams.get('category')!)) {
+            setCategory(searchParams.get('category') as Category);
+        }
+        getImages();
+    }, [searchParams]);
 
     const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
@@ -51,7 +63,7 @@ const MainPage: React.FC = () => {
     const getImages = async () => {
         try {
             setLoading(true);
-            const res = await axios.get('/images');
+            const res = await axios.get(`/images/category/${category}`);
             setImages(res.data);
         } catch (error) {
             console.log(error);
@@ -59,10 +71,6 @@ const MainPage: React.FC = () => {
             setLoading(false);
         }
     };
-
-    useEffect(() => {
-        getImages();
-    }, []);
 
     return (
         <div>
@@ -79,6 +87,7 @@ const MainPage: React.FC = () => {
                 </button>
                 <div>
                     {loading && <p>Loading...</p>}
+
                     {images.map((image) => (
                         <img key={image} src={image} alt='image' />
                     ))}
