@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar';
 import axios from '@/api/axios';
 import { categories, Category } from '@/utils/categories';
 import UploadImageButton from '@/components/UploadImageButton';
+import CategorySelector from '@/components/CategorySelector';
 
 const MainPage: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -16,8 +17,11 @@ const MainPage: React.FC = () => {
         if (searchParams.has('category') && categories.includes(searchParams.get('category')!)) {
             setCategory(searchParams.get('category') as Category);
         }
-        getImages();
     }, [searchParams]);
+
+    useEffect(() => {
+        getImages();
+    }, [category]);
 
     const getImages = async () => {
         try {
@@ -39,6 +43,7 @@ const MainPage: React.FC = () => {
             <main>
                 <div className='mx-auto my-24 max-w-[30rem] rounded-md p-6 shadow-xs sm:p-12 md:max-w-[40rem] md:p-24 lg:max-w-[60rem]'>MainPage</div>
                 <UploadImageButton />
+                <CategorySelector category={category} setCategory={setCategory} />
                 <div>
                     {loading && <p>Loading...</p>}
                     {images.map((image) => (
