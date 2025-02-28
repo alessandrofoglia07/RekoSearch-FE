@@ -7,7 +7,7 @@ import UploadImageButton from '@/components/UploadImageButton';
 import CategorySelector from '@/components/CategorySelector';
 
 const MainPage: React.FC = () => {
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
 
     const [images, setImages] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
