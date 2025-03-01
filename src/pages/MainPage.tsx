@@ -5,6 +5,7 @@ import axios from '@/api/axios';
 import { categories, Category } from '@/utils/categories';
 import UploadImageButton from '@/components/UploadImageButton';
 import CategorySelector from '@/components/CategorySelector';
+import useDebounce from '@/hooks/useDebounce';
 
 const MainPage: React.FC = () => {
     const [searchParams] = useSearchParams();
@@ -12,12 +13,19 @@ const MainPage: React.FC = () => {
     const [images, setImages] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const [category, setCategory] = useState<Category>('Trending');
+    const [search, setSearch] = useState('');
+
+    const debouncedSearch = useDebounce(search, 500);
 
     useEffect(() => {
         if (searchParams.has('category') && categories.includes(searchParams.get('category')!)) {
             setCategory(searchParams.get('category') as Category);
         }
     }, [searchParams]);
+
+    useEffect(() => {
+        // handle search
+    }, [debouncedSearch]);
 
     useEffect(() => {
         getImages();
@@ -38,7 +46,7 @@ const MainPage: React.FC = () => {
     return (
         <div>
             <header className='h-20'>
-                <Navbar />
+                <Navbar search={search} setSearch={setSearch} />
             </header>
             <main>
                 <div className='mx-auto my-24 max-w-[30rem] rounded-md p-6 shadow-xs sm:p-12 md:max-w-[40rem] md:p-24 lg:max-w-[60rem]'>MainPage</div>
