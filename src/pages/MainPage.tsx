@@ -7,6 +7,7 @@ import UploadImageButton from '@/components/UploadImageButton';
 import CategorySelector from '@/components/CategorySelector';
 import useDebounce from '@/hooks/useDebounce';
 import { ShortImageResponse } from '@/types';
+import { searchByLabel } from '@/api/searchImages';
 
 const MainPage: React.FC = () => {
     const [searchParams] = useSearchParams();
@@ -47,14 +48,7 @@ const MainPage: React.FC = () => {
     const searchImages = async () => {
         try {
             setLoading(true);
-            const labels = search.split(' ').filter((label) => label.length > 2);
-            const data: ShortImageResponse[][] = await Promise.all(
-                labels.map(async (label) => {
-                    const res = await axios.get(`/images/label/${label}`);
-                    return res.data as ShortImageResponse[];
-                })
-            );
-            const images = data.flat();
+            const images = await searchByLabel(search, true);
             setImages(images);
         } catch (err) {
             console.log(err);
