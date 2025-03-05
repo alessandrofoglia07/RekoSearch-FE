@@ -12,3 +12,8 @@ export const searchByLabel = async (search: string, shortResponse: boolean = fal
     const images = data.flat();
     return images;
 };
+
+export const searchByUser = async (username: string, shortResponse: boolean = false): Promise<ShortImageResponse[] | CompleteImageResponse[]> => {
+    const res = await axios.get(`/images/user/${username}?short=${shortResponse}`);
+    return res.data;
+};
