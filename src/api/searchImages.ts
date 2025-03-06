@@ -1,6 +1,11 @@
 import { CompleteImageResponse, ShortImageResponse } from "@/types";
 import axios from "./axios";
 
+export const searchByCategory = async (category: string, shortResponse: boolean = false): Promise<ShortImageResponse[] | CompleteImageResponse[]> => {
+    const res = await axios.get(`/images/category/${category}?short=${shortResponse}`);
+    return res.data;
+};
+
 export const searchByLabel = async (search: string, shortResponse: boolean = false): Promise<ShortImageResponse[] | CompleteImageResponse[]> => {
     const labels = search.split(' ').filter((label) => label.length > 2);
     const data: ShortImageResponse[][] | CompleteImageResponse[][] = await Promise.all(

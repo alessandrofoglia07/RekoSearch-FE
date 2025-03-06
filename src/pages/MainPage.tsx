@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
-import axios from '@/api/axios';
 import { categories, Category } from '@/utils/categories';
 import UploadImageButton from '@/components/UploadImageButton';
 import CategorySelector from '@/components/CategorySelector';
 import useDebounce from '@/hooks/useDebounce';
 import { ShortImageResponse } from '@/types';
-import { searchByLabel } from '@/api/searchImages';
+import { searchByCategory, searchByLabel } from '@/api/searchImages';
 
 const MainPage: React.FC = () => {
     const [searchParams] = useSearchParams();
@@ -36,8 +35,8 @@ const MainPage: React.FC = () => {
     const getImages = async () => {
         try {
             setLoading(true);
-            const res = await axios.get(`/images/category/${category}`);
-            setImages(res.data);
+            const images = await searchByCategory(category, true);
+            setImages(images);
         } catch (error) {
             console.log(error);
         } finally {
@@ -69,7 +68,9 @@ const MainPage: React.FC = () => {
                 <div>
                     {loading && <p>Loading...</p>}
                     {images.map((image) => (
-                        <img key={image.imageId} src={image.fileUrl} alt='image' />
+                        <a href={`/image/${image.imageId}`} key={image.imageId}>
+                            <img src={image.fileUrl} alt='image' />
+                        </a>
                     ))}
                 </div>
             </main>
