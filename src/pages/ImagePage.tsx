@@ -22,7 +22,7 @@ const ImagePage: React.FC = () => {
     };
 
     useEffect(() => {
-        if (!id) return; // handle error
+        if (!id) return; // TODO: handle error
 
         getImageData(id);
     }, [id]);
