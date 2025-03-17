@@ -1,13 +1,15 @@
 import React from 'react';
 
 interface Props {
-    search: string;
-    setSearch: React.Dispatch<React.SetStateAction<string>>;
+    search?: string;
+    setSearch?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const Navbar: React.FC<Props> = ({ search, setSearch }: Props) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearch(e.target.value);
+        if (search && setSearch) {
+            setSearch(e.target.value);
+        }
     };
 
     return (
@@ -15,9 +17,11 @@ const Navbar: React.FC<Props> = ({ search, setSearch }: Props) => {
             <a className='h-full pr-4 md:pr-8' href='/'>
                 RekoSearch
             </a>
-            <div className='-md:w-3/4 flex h-full items-center md:pr-8'>
-                <input type='text' placeholder='Search for an image' spellCheck='false' value={search} onChange={handleChange} />
-            </div>
+            {search && setSearch && (
+                <div className='-md:w-3/4 flex h-full items-center md:pr-8'>
+                    <input type='text' placeholder='Search for an image' spellCheck='false' value={search} onChange={handleChange} />
+                </div>
+            )}
             <div className='flex h-full w-10 items-center justify-end md:w-[calc(3rem+150px)]'></div>
         </nav>
     );
