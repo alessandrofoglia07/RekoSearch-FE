@@ -23,3 +23,15 @@ export interface CompleteImageResponse {
     labels: string[];
     fileUrl: string;
 }
+
+export interface UserData {
+    userId: string;
+    username: string;
+    email: string;
+    profilePictureUrl: string;
+    bio: string;
+    followers: number;
+    following: number;
+    views: number;
+    likes: number;
+}
