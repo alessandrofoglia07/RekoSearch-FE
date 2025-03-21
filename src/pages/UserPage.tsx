@@ -36,7 +36,32 @@ const UserPage: React.FC = () => {
         })();
     }, [username]);
 
-    return <div>UserPage</div>;
+    return (
+        <div>
+            {loading ? (
+                <div>Loading...</div>
+            ) : !images || !userData ? (
+                <div>Error</div>
+            ) : (
+                <div>
+                    <img src={userData.profilePictureUrl} alt={userData.username} />
+                    <div>{userData.username}</div>
+                    <div>{userData.bio}</div>
+                    <div>
+                        {userData.followers} followers | {userData.following} following
+                    </div>
+                    <div>
+                        {userData.views} views | {userData.likes} likes
+                    </div>
+                    <div>
+                        {images.map((image) => (
+                            <img key={image.imageId} src={image.fileUrl} alt={image.imageTitle} />
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 };
 
 export default UserPage;
